@@ -34,7 +34,6 @@ import org.dolphinemu.dolphinemu.features.settings.model.view.*
 import org.dolphinemu.dolphinemu.model.GpuDriverMetadata
 import org.dolphinemu.dolphinemu.ui.main.MainPresenter
 import org.dolphinemu.dolphinemu.utils.*
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -2273,7 +2272,6 @@ class SettingsFragmentPresenter(
 
     private fun addWiimoteSubSettings(sl: ArrayList<SettingsItem>, wiimoteNumber: Int) {
         val wiimote = EmulatedController.getWiimote(wiimoteNumber)
-
         if (!TextUtils.isEmpty(gameId)) {
             addControllerPerGameSettings(sl, wiimote, wiimoteNumber)
         } else {
@@ -2446,15 +2444,24 @@ class SettingsFragmentPresenter(
                 0,
                 true
             ) { clearControllerSettings(controller) })
-        sl.add(
-            RunRunnable(
-                context,
-                R.string.input_profiles,
-                0,
-                0,
-                0,
-                true
-            ) { fragmentView.showDialogFragment(ProfileDialog.create(menuTag)) })
+
+
+        val profileSelector = RunRunnable(
+          context,
+          R.string.input_profiles,
+          0,
+          0,
+          0,
+          true
+        ) { fragmentView.showDialogFragment(ProfileDialog.create(menuTag)) }
+
+        sl.add(profileSelector)
+        profileSelector.updateDescription(context.getString(R.string.input_profiles_descríption, controller.getProfileName()))
+
+      /*var l = ""
+      ProfileDialogPresenter(menuTag).getProfileNames(false).forEach { l+= "$it, " }
+      Log.error("Profile: ${}")
+      Log.error("Profiles: $l")*/
 
         updateOldControllerSettingsWarningVisibility(controller)
     }
